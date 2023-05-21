@@ -25,7 +25,7 @@ class RolesController extends Controller
     public function create()
     {
         $permission = Permission::get();
-        return view('users.roles.create')->with(['Permission'=>$permission]);
+        return view('users.roles.create')->with(['Permissions'=>$permission]);
     }
 
     /**

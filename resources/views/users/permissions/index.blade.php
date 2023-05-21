@@ -44,7 +44,7 @@
                     </div>
                     <div class="card-body">
                         {{-- Datatables --}}
-                        <div class="table-response">
+                        <div class="table-responsive">
                             <table id="table-data"
                                 class="table table-bordered table-striped dataTable dtr-inline collapsed">
                                 <thead>

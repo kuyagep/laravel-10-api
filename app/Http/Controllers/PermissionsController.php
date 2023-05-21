@@ -101,14 +101,10 @@ class PermissionsController extends Controller
         $data = Permission::get();
         return DataTables::of($data)
         ->addColumn('chkBox', function($row) {
-            $chkBox = '<input type="checkbox" name="permission[{{$row->name}}]" value="{{$row->name}}" class="checkbox">';
+            $chkBox = '<input type="checkbox" name="permission[{{$row->name}}]" value="{{$row->name}}" class="permission">';
             return $chkBox;
         })
         ->addColumn('action', function ($row) {
-            // $actions = "";
-            // $actions .= '<a class="btn btn-xs btn-warning mr-1" href="'.route('users.permissions.edit', $row->id).'" id="btnEdit"><i class="fas fa-edit"></i>Edit</a>';
-            // $actions .= '<button class="btn btn-xs btn-danger" id="btnDelete" data-id="'.$row->id.'"><i class="fas fa-trash"></i>Delete</button>';
-            
             $action = '<a class="btn btn-xs btn-warning mr-1" href="'.route("users.permissions.edit",$row->id).'" id="btnEdit"><i class="fas fa-edit"></i>Edit</a>';
             $action .= '<button class="btn btn-xs btn-danger" id="btnDelete" data-id="'.$row->id .'"><i class="fas fa-trash"></i>Delete</button>';
             return $action;

@@ -14,23 +14,26 @@
             <div class="card">
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="name">Roles <span class="text-danger"> *</span></label>
+                        <label for="name" class="form-label">Name <span class="text-danger"> *</span></label>
                         <input type="text" class="form-control" name="name" id="name" placeholder="E.g. Manager"
                             value="{{ old('name') }}">
                         @if ($errors->has('name'))
                             <span class="text-danger">{{ $errors->first('name') }}</span>
                         @endif
                     </div>
-                    {{-- Datatables --}}
                     <label for="name">Assign Permissions <span class="text-danger"> *</span></label>
-                    <div class="table-response">
+                    {{-- Datatables --}}
+                    <div class="table-responsive">
                         <table id="table-data" class="table table-bordered table-striped dataTable dtr-inline collapsed">
                             <thead>
-                                <th>
-                                    <input class="permissions" type="checkbox" name="all_permission" id="all_permission">
-                                </th>
-                                <th>NAME</th>
-                                <th>GUARD</th>
+                                <tr>
+                                    <th>
+                                        <input class="permissions" type="checkbox" name="all_permission"
+                                            id="all_permission">
+                                    </th>
+                                    <th>NAME</th>
+                                    <th>GUARD</th>
+                                </tr>
                             </thead>
                         </table>
                     </div>
@@ -55,13 +58,13 @@
             }
         });
         $(document).ready(function() {
-            $('[name="all_permission"]').on('click', function() {
+            $('[name="all_permission"]').on("click", function() {
                 if ($(this).is(":checked")) {
-                    $.each($('.permissions'), function() {
+                    $.each($('.permission'), function() {
                         $(this).prop('checked', true);
                     });
                 } else {
-                    $.each($('.permissions'), function() {
+                    $.each($('.permission'), function() {
                         $(this).prop('checked', false);
                     });
                 }
@@ -87,11 +90,9 @@
                 }, ],
                 order: [
                     [0, "desc"]
-                ],
-
+                ]
             });
-
-        })
+        });
     </script>
 @stop
 
