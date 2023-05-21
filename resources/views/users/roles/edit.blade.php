@@ -82,7 +82,7 @@
                 autoWidth: false,
                 bPaginate: false,
                 bFilter: false,
-                ajax: "{{ route('users.permissions.index') }}",
+                ajax: "{{ route('users.permissions.index', ['role_id' => $role->id]) }}",
                 columns: [{
                     data: 'chkBox',
                     name: 'chkBox',

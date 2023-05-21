@@ -16,6 +16,7 @@ class RolesController extends Controller
     public function index(Request $request)
     {   
         if($request->ajax()){
+            
             return $this->getRoles();
         }
         return view('users.roles.index');
@@ -46,7 +47,7 @@ class RolesController extends Controller
             Alert::success('Success', 'New role saved successfully!');
             return view('users.roles.index');
         }
-        Alert::error('Error','Role not saved. Try again later!');
+        Alert::error('Failed','Role not saved. Try again later!');
         return redirect()->back()->withInput();
     }
 
@@ -63,15 +64,26 @@ class RolesController extends Controller
      */
     public function edit(Request $request, Role $role)
     {
-        return view('user.roles.edit')->with(['role' => $role]);
+        return view('users.roles.edit')->with(['role' => $role]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Role $role, Request $request)
     {
-        //
+        $this->validate($request, [
+            'name' => 'requred',
+            'permission' => 'requred',
+        ]);
+        $role->update($request->only('name'));
+        $role->syncPermissions($request->permission);
+        if ($role) {
+            Alert::success('Success', 'Role updated successfully!');
+            return view('users.roles.index');
+        }
+        Alert::error('Failed', 'Role not updated. Try again later!');
+        return redirect()->back()->withInput();
     }
 
     /**
