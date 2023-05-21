@@ -24,9 +24,10 @@
                     <table id="table-data" class="table table-bordered table-striped dataTable dtr-inline collapsed">
                         <thead>
                             <th>ID</th>
-                            <th>NAME</th>
-                            <th>USERS</th>
-                            <th>PERMISIONS</th>
+                            <th>Name</th>
+                            <th>Users</th>
+                            <th>Permission</th>
+                            <th>Action</th>
                         </thead>
                     </table>
                 </div>
@@ -67,8 +68,8 @@
                     data: 'users_count',
                     name: 'users_count'
                 }, {
-                    data: 'permission_count ',
-                    name: 'permission_count'
+                    data: 'permissions_count',
+                    name: 'permissions_count'
                 }, {
                     data: 'action',
                     name: 'action'

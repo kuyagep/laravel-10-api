@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 use Spatie\Permission\Models\Permission;
+use RealRashid\SweetAlert\Facades\Alert;
+
 class RolesController extends Controller
 {
     /**
@@ -33,7 +35,19 @@ class RolesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //Validate Names
+        $this->validate($request, [
+            'name' => 'required|unique:roles,name',
+            'permission' => 'required'
+        ]);
+        $role = Role::create(['name' => strtolower(trim($request->name))]);
+        $role->syncPermissions($request->permission);
+        if ($role) {
+            Alert::success('Success', 'New role saved successfully!');
+            return view('users.roles.index');
+        }
+        Alert::error('Error','Role not saved. Try again later!');
+        return redirect()->back()->withInput();
     }
 
     /**
@@ -47,9 +61,9 @@ class RolesController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Request $request, Role $role)
     {
-        //
+        return view('user.roles.edit')->with(['role' => $role]);
     }
 
     /**
@@ -71,18 +85,20 @@ class RolesController extends Controller
     private function getRoles(){
         $data = Role::withCount('users','permissions')->get();
         return DataTables::of($data)
+        ->addColumn('name', function($row){
+            return ucfirst($row->name);
+        })
         ->addColumn('users_count', function($row){
             return $row->users_count;
         })
-        ->addColumn('permission_count', function($row){
-            return $row->permission_count;
+        ->addColumn('permissions_count', function($row){
+            return $row->permissions_count;
         })
         ->addColumn('action', function($row){
             $action = "";
             $action .= '<a class="btn btn-xs btn-warning mr-1" href=' . route('users.roles.edit', $row->id) . ' id="btnEdit"><i class="fas fa-edit"></i>Edit</a>';
             $action .= '<button class="btn btn-xs btn-danger" id="btnDelete" data-id=' . $row->id . '><i class="fas fa-trash"></i>Delete</button>';
             return $action;
-        })
-        ->make('true');
+        })->make('true');
     }
 }
