@@ -88,9 +88,6 @@ class PermissionsController extends Controller
      */
     public function destroy(Request $request, Permission $permission)
     {
-
-        
-
         if($request->ajax() && $permission->delete()){
             return response(["message" => "Permission deleted successfully"], 200);
         }
