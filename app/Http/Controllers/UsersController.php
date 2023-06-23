@@ -66,9 +66,13 @@ class UsersController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $user)
     {
-        //
+        return view('users.edit',[
+            "users"=>$user,
+            "userRole" => $user->roles->pluck('name')->toArray(),
+            "roles" => Role::latest()->get()
+        ]);
     }
 
     /**
@@ -89,6 +93,8 @@ class UsersController extends Controller
         }
         return response(["message" => "User delete error! Please try again later"], 201);
     }
+
+    
     private function getUsers()
     {   
         $data = User::with('roles')->get();
@@ -99,11 +105,11 @@ class UsersController extends Controller
         ->addColumn('date', function($row){
             return Carbon::parse( $row->created_at)->format('d M, Y h:i:s A');
         })
-        ->addColumn('role', function($row){
+        ->addColumn('roles', function($row){
              $role = "";
             if($row->roles != null){
                 foreach ($row->roles as $next) {
-                    $role.= '<span class="badge badge-primary">'.ucfirst($next->name).'</span>';
+                    $role .= '<span class="badge badge-primary">'.ucfirst($next->name).'</span>';
                 }
             }
             return $role;
@@ -115,6 +121,6 @@ class UsersController extends Controller
             $action .= '<button class="btn btn-xs btn-danger" id="btnDelete" data-id=' . $row->id . '><i class="fas fa-trash"></i></button>';
             return $action;
         })
-        ->rawColumns(['name','date','role', 'action'])->make('true');
+        ->rawColumns(['name','date','roles', 'action'])->make('true');
     }
 }

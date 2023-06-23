@@ -46,7 +46,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="password">Roles <span class="text-danger">*</span></label>
-                                <select name="role[]" class="form-control select2" multiple="multiple"
+                                <select name="roles[]" class="form-control select2" multiple="multiple"
                                     data-placeholder="Select Roles" id="select2">
                                     @foreach ($roles as $role)
                                         <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
