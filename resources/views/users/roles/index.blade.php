@@ -72,7 +72,9 @@
                     name: 'permissions_count'
                 }, {
                     data: 'action',
-                    name: 'action'
+                    name: 'action',
+                    bsortable: false,
+                    className: "text-center"
                 }, ],
                 order: [
                     [0, "desc"]

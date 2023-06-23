@@ -7,6 +7,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Redirect;
 use RealRashid\SweetAlert\Facades\Alert;
 
 
@@ -48,7 +49,7 @@ class UsersController extends Controller
         }
          if ($user) {
             Alert::success('Success', 'User saved successfully!');
-             return view('users.index')->with(['roles'=>Role::get()]);
+            return Redirect::to('users');
         }
         Alert::error('Failed', 'User not saved. Try again later!');
         return redirect()->back()->withInput();
@@ -98,8 +99,8 @@ class UsersController extends Controller
         ->addColumn('date', function($row){
             return Carbon::parse( $row->created_at)->format('d M, Y h:i:s A');
         })
-        ->addColumn('roles', function($row){
-            $role = "";
+        ->addColumn('role', function($row){
+             $role = "";
             if($row->roles != null){
                 foreach ($row->roles as $next) {
                     $role.= '<span class="badge badge-primary">'.ucfirst($next->name).'</span>';
@@ -109,10 +110,11 @@ class UsersController extends Controller
         })
         ->addColumn('action', function($row){
             $action = "";
-            $action .= '<a class="btn btn-xs btn-primary mr-1" href=' . route('users.roles.show', $row->id) . ' id="btnShow"><i class="fas fa-eye"></i>View </a>';
-            $action .= '<a class="btn btn-xs btn-warning mr-1" href=' . route('users.roles.edit', $row->id) . ' id="btnEdit"><i class="fas fa-edit"></i>Edit </a>';
-            $action .= '<button class="btn btn-xs btn-danger" id="btnDelete" data-id=' . $row->id . '><i class="fas fa-trash"></i>Delete</button>';
+            $action .= '<a class="btn btn-xs btn-primary mr-1" href=' . route('users.roles.show', $row->id) . ' id="btnShow"><i class="fas fa-eye"></i> </a>';
+            $action .= '<a class="btn btn-xs btn-warning mr-1" href=' . route('users.roles.edit', $row->id) . ' id="btnEdit"><i class="fas fa-edit"></i> </a>';
+            $action .= '<button class="btn btn-xs btn-danger" id="btnDelete" data-id=' . $row->id . '><i class="fas fa-trash"></i></button>';
             return $action;
-        })->rawColumns(['name','date','roles', 'action'])->make(true);
+        })
+        ->rawColumns(['name','date','role', 'action'])->make('true');
     }
 }
