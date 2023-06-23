@@ -145,7 +145,7 @@
 
                 if (confirm('Delete Data ' + id + ' ?') == true) {
                     //execute delete
-                    var route = "{{ route('users.permissions.destroy', ':id') }}";
+                    var route = "{{ route('users.destroy', ':id') }}";
                     route = route.replace(':id', id);
                     $.ajax({
                         url: route,
