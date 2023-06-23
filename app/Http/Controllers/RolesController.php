@@ -54,9 +54,12 @@ class RolesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, Role $role)
     {
-        //
+         if($request->ajax()){
+            return $this->getRolesPermissions($role);
+         }
+        return view('users.roles.show')->with(['role' => $role]);
     }
 
     /**
@@ -89,9 +92,12 @@ class RolesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, Role $role)
     {
-        //
+        if($request->ajax() && $role->delete()){
+            return response(["message" => "Role deleted successfully"], 200);
+        }
+        return response(["message" => "Role delete error! Please try again later"], 201);
     }
 
     private function getRoles(){
@@ -108,9 +114,16 @@ class RolesController extends Controller
         })
         ->addColumn('action', function($row){
             $action = "";
-            $action .= '<a class="btn btn-xs btn-warning mr-1" href=' . route('users.roles.edit', $row->id) . ' id="btnEdit"><i class="fas fa-edit"></i>Edit</a>';
+            $action .= '<a class="btn btn-xs btn-primary mr-1" href=' . route('users.roles.show', $row->id) . ' id="btnShow"><i class="fas fa-eye"></i>View </a>';
+            $action .= '<a class="btn btn-xs btn-warning mr-1" href=' . route('users.roles.edit', $row->id) . ' id="btnEdit"><i class="fas fa-edit"></i>Edit </a>';
             $action .= '<button class="btn btn-xs btn-danger" id="btnDelete" data-id=' . $row->id . '><i class="fas fa-trash"></i>Delete</button>';
             return $action;
         })->make('true');
+    }
+
+    private function getRolesPermissions($role)
+    {
+        $permissions = $role->permissions;
+        return DataTables::of($permissions)->make(true); 
     }
 }

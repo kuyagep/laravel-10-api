@@ -15,7 +15,7 @@
                     <h3>List</h3>
                 </div>
 
-                <a href="{{ route('users.roles.create') }}" class="float-right btn btn-primary btn-xs m-0">Add New</a>
+                <a href="{{ route('users.roles.create') }}" class="float-right btn btn-primary btn-sm m-0">Add New</a>
             </div>
 
             <div class="card-body">
@@ -84,26 +84,38 @@
                 //confirmation
                 var id = $(this).data('id');
 
-                if (confirm('Delete Data ' + id + ' ?') == true) {
-                    //execute delete
-                    var route = "{{ route('users.permissions.destroy', ':id') }}";
-                    route = route.replace(':id', id);
-                    $.ajax({
-                        url: route,
-                        type: "delete",
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this Data!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!',
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var route = "{{ route('users.roles.destroy', ':id') }}";
+                        route = route.replace(':id', id);
+                        $.ajax({
+                            url: route,
+                            type: "delete",
 
-                        success: function(res) {
-                            $("#table-data").DataTable().ajax.reload();
-                        },
-                        error: function(res) {
-                            $("#error-message").html(
-                                '<div class="alert alert-danger">' + response.message +
-                                '</div>');
-                        }
-                    });
-                } else {
-                    //do something
-                }
+                            success: function(res) {
+                                $("#table-data").DataTable().ajax.reload();
+                            },
+                            error: function(res) {
+                                $("#error-message").html(
+                                    '<div class="alert alert-danger">' + response
+                                    .message +
+                                    '</div>');
+                            }
+                        });
+                    }
+
+                });
+
             });
         })
     </script>

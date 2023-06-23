@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\RolesController;
+use App\Http\Controllers\UsersController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -24,7 +25,12 @@ Auth::routes();
 
 Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
+
+
 Route::group(['prefix' => 'users', 'as' => 'users.'], function(){
     Route::resource('permissions', PermissionsController::class);
     Route::resource('roles', RolesController::class);
+    
 });
+
+Route::resource('users', UsersController::class);

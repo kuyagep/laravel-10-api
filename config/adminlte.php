@@ -318,7 +318,8 @@ return [
             'submenu'     => [
                 [
                     'text' => 'All',
-                    'url'  => 'users',
+                    'route'  => 'users.index',
+                    'active'=>['users']
                 ],
                 [
                     'text' => 'Roles',
