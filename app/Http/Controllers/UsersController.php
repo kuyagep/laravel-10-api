@@ -69,7 +69,7 @@ class UsersController extends Controller
     public function edit(User $user)
     {
         return view('users.edit',[
-            "users"=>$user,
+            "user"=>$user,
             "userRole" => $user->roles->pluck('name')->toArray(),
             "roles" => Role::latest()->get()
         ]);
@@ -78,9 +78,21 @@ class UsersController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $user)
     {
-        //
+         $this->validate($request,[
+            'name' => 'required',
+            'email' => 'required|email:rfc, dns|unique:users,email,'.$user->id,
+        ]);
+            $user->update($request->all());
+           $user->roles()->sync($request->input('roles'));
+        
+         if ($user) {
+            Alert::success('Success', 'User updated successfully!');
+            return Redirect::to('users');
+        }
+        Alert::error('Failed', 'User not updated. Try again later!');
+        return redirect()->back()->withInput();
     }
 
     /**
@@ -91,7 +103,7 @@ class UsersController extends Controller
         if($request->ajax() && $user->delete()){
             return response(["message" => "User deleted successfully"], 200);
         }
-        return response(["message" => "User delete error! Please try again later"], 201);
+        return response(["message" => "User deleting error! Please try again later"], 201);
     }
 
     
@@ -116,8 +128,8 @@ class UsersController extends Controller
         })
         ->addColumn('action', function($row){
             $action = "";
-            $action .= '<a class="btn btn-xs btn-primary mr-1" href=' . route('users.roles.show', $row->id) . ' id="btnShow"><i class="fas fa-eye"></i> </a>';
-            $action .= '<a class="btn btn-xs btn-warning mr-1" href=' . route('users.roles.edit', $row->id) . ' id="btnEdit"><i class="fas fa-edit"></i> </a>';
+            // $action .= '<a class="btn btn-xs btn-primary mr-1" href=' . route('users.show', $row->id) . ' id="btnShow"><i class="fas fa-eye"></i> </a>';
+            $action .= '<a class="btn btn-xs btn-warning mr-1" href=' . route('users.edit', $row->id) . ' id="btnEdit"><i class="fas fa-edit"></i> </a>';
             $action .= '<button class="btn btn-xs btn-danger" id="btnDelete" data-id=' . $row->id . '><i class="fas fa-trash"></i></button>';
             return $action;
         })

@@ -23,14 +23,15 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
 
+Route::group(['middleware' => ['auth','permission']],   function(){
+    Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    Route::group(['prefix' => 'users', 'as' => 'users.'], function(){
+        Route::resource('permissions', PermissionsController::class);
+        Route::resource('roles', RolesController::class);
+        
+    });
 
-Route::group(['prefix' => 'users', 'as' => 'users.'], function(){
-    Route::resource('permissions', PermissionsController::class);
-    Route::resource('roles', RolesController::class);
-    
+    Route::resource('users', UsersController::class);
 });
-
-Route::resource('users', UsersController::class);

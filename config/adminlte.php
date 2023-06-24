@@ -319,7 +319,7 @@ return [
                 [
                     'text' => 'All',
                     'route'  => 'users.index',
-                    'active'=>['users']
+                    'active'=>['users', 'users/*']
                 ],
                 [
                     'text' => 'Roles',
