@@ -1,22 +1,23 @@
 @extends('adminlte::page')
 
-@section('title', 'Create Roles | Dashboard')
+@section('title', 'Update Roles | Dashboard')
 
 @section('content_header')
-    <h1>Create Roles</h1>
+    <h1>Update Roles</h1>
 @stop
 
 @section('content')
     <div class="container-fliud">
         <div id="error-message"></div>
-        <form action="{{ route('users.roles.store') }}" method="post">
+        <form action="{{ route('users.roles.update', $role->id) }}" method="post">
+            @method('patch')
             @csrf
             <div class="card">
                 <div class="card-body">
                     <div class="form-group">
                         <label for="name" class="form-label">Name <span class="text-danger"> *</span></label>
                         <input type="text" class="form-control" name="name" id="name" placeholder="E.g. Manager"
-                            value="{{ old('name') }}">
+                            value="{{ ucfirst($role->name) }}">
                         @if ($errors->has('name'))
                             <span class="text-danger">{{ $errors->first('name') }}</span>
                         @endif
@@ -81,7 +82,7 @@
                 autoWidth: false,
                 bPaginate: false,
                 bFilter: false,
-                ajax: "{{ route('users.permissions.index') }}",
+                ajax: "{{ route('users.permissions.index', ['role_id' => $role->id]) }}",
                 columns: [{
                     data: 'chkBox',
                     name: 'chkBox',

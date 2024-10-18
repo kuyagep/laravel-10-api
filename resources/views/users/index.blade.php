@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Permissions | Dashboard')
+@section('title', 'Users | Dashboard')
 
 @section('content_header')
-    <h1>Permissions</h1>
+    <h1>Users</h1>
 @stop
 
 @section('content')
@@ -12,7 +12,7 @@
             <div id="error-message"></div>
             <div class="col-md-3">
                 <div class="card card-gray">
-                    <form method="POST"action="{{ route('users.permissions.store') }}">
+                    <form method="POST"action="{{ route('users.store') }}">
 
                         @csrf
                         <div class="card-header">
@@ -20,12 +20,38 @@
                         </div>
                         <div class="card-body">
                             <div class="form-group">
-                                <label for="name">Permissions <span class="text-danger">*</span></label>
+                                <label for="name">Name <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" name="name" id="name"
-                                    placeholder="Enter Permission Name" value="{{ old('name') }}">
+                                    placeholder="Enter Full Name" value="{{ old('name') }}">
                                 @if ($errors->has('name'))
                                     <span class="text-danger">{{ $errors->first('name') }}</span>
                                 @endif
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="email" id="email"
+                                    placeholder="Enter Users Email" value="{{ old('email') }}">
+                                @if ($errors->has('email'))
+                                    <span class="text-danger">{{ $errors->first('email') }}</span>
+                                @endif
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" name="password" id="password"
+                                    placeholder="Enter Users password" value="{{ old('password') }}">
+                                @if ($errors->has('password'))
+                                    <span class="text-danger">{{ $errors->first('password') }}</span>
+                                @endif
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Roles <span class="text-danger">*</span></label>
+                                <select name="roles[]" class="form-control select2" multiple="multiple"
+                                    data-placeholder="Select Roles" id="select2">
+                                    @foreach ($roles as $role)
+                                        <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
+                                    @endforeach
+                                </select>
                             </div>
 
                         </div>
@@ -49,9 +75,11 @@
                                 class="table table-bordered table-striped dataTable dtr-inline collapsed">
                                 <thead>
                                     <th>ID</th>
-                                    <th>NAME</th>
-                                    <th>GUARD</th>
-                                    <th>ACTION</th>
+                                    <th>Name </th>
+                                    <th>Email</th>
+                                    <th>Date</th>
+                                    <th>Roles</th>
+                                    <th>Action</th>
                                 </thead>
                             </table>
                         </div>
@@ -71,6 +99,9 @@
 
 @section('js')
     <script>
+        $(function() {
+            $('#select2').select2();
+        });
         $(document).ready(function() {
             $.ajaxSetup({
                 headers: {
@@ -82,7 +113,7 @@
                 processing: true,
                 serverSide: true,
                 autoWidth: false,
-                ajax: "{{ route('users.permissions.index') }}",
+                ajax: "{{ route('users.index') }}",
                 columns: [{
                     data: 'id',
                     name: 'id'
@@ -90,8 +121,14 @@
                     data: 'name',
                     name: 'name'
                 }, {
-                    data: 'guard_name',
-                    name: 'guard_name'
+                    data: 'email',
+                    name: 'email'
+                }, {
+                    data: 'date',
+                    name: 'date'
+                }, {
+                    data: 'roles',
+                    name: 'roles'
                 }, {
                     data: 'action',
                     name: 'action',
@@ -110,7 +147,7 @@
 
                 if (confirm('Delete Data ' + id + ' ?') == true) {
                     //execute delete
-                    var route = "{{ route('users.permissions.destroy', ':id') }}";
+                    var route = "{{ route('users.destroy', ':id') }}";
                     route = route.replace(':id', id);
                     $.ajax({
                         url: route,
@@ -134,3 +171,4 @@
 @stop
 
 @section('plugins.Datatables', true)
+@section('plugins.Select2', true)

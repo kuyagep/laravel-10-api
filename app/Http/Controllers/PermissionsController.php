@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use RealRashid\SweetAlert\Facades\Alert;
 use Yajra\DataTables\Facades\DataTables;
-
+use Spatie\Permission\Models\Role;
 class PermissionsController extends Controller
 {
     /**
@@ -15,7 +15,7 @@ class PermissionsController extends Controller
     public function index(Request $request)
     {
         if($request->ajax()){
-           return $this->getPermissions();
+           return $this->getPermissions($request->role_id);
             
         }
         return view('users.permissions.index');
@@ -44,7 +44,7 @@ class PermissionsController extends Controller
             Alert::success('Success', 'New permission saved successfully!');
             return view('users.permissions.index');
         }else{
-            Alert::error('Error', 'Permission not saved. Try again later!');
+            Alert::error('Failed', 'Permission not saved. Try again later!');
         }
         return redirect()->back()->withInput();
     }
@@ -79,7 +79,7 @@ class PermissionsController extends Controller
             return view('users.permissions.index');
         }
 
-        Alert::error('Error', 'Permission not updated. Try again later!');
+        Alert::error('Failed', 'Permission not updated. Try again later!');
         return redirect()->back()->withInput();
     }
 
@@ -88,27 +88,32 @@ class PermissionsController extends Controller
      */
     public function destroy(Request $request, Permission $permission)
     {
-
-        
-
         if($request->ajax() && $permission->delete()){
             return response(["message" => "Permission deleted successfully"], 200);
         }
         return response(["message" => "Permission delete error! Please try again later"], 201);
     }
 
-    private function getPermissions(){
+    private function getPermissions($role_id){
         $data = Permission::get();
-        return DataTables::of($data)
-        ->addColumn('chkBox', function($row) {
-            $chkBox = '<input type="checkbox" name="permission[{{$row->name}}]" value="{{$row->name}}" class="checkbox">';
-            return $chkBox;
+        return DataTables::of($data, $role_id)
+        ->addColumn('chkBox', function($row) use ($role_id) {
+            if ($row->name == "dashboard") {
+                return $chkBox = '<input type="checkbox" name="permission['.$row->name.']" value="'.$row->name.'" class="permission" checked onclick="return false;">';
+            }else{
+                if($role_id != ""){
+                    $role = Role::where('id', $role_id)->first();
+                    $rolePermission = $role->permissions->pluck('name')->toArray();
+                    if(in_array($row->name, $rolePermission)){
+                        return $chkBox = '<input type="checkbox" name="permission[' . $row->name . ']" value="' . $row->name . '" class="permission" checked >';
+                    }
+                }
+                return $chkBox = '<input type="checkbox" name="permission[' . $row-> name . ']" value="'.$row->name.'" class="permission">';
+            }
+            
+            
         })
         ->addColumn('action', function ($row) {
-            // $actions = "";
-            // $actions .= '<a class="btn btn-xs btn-warning mr-1" href="'.route('users.permissions.edit', $row->id).'" id="btnEdit"><i class="fas fa-edit"></i>Edit</a>';
-            // $actions .= '<button class="btn btn-xs btn-danger" id="btnDelete" data-id="'.$row->id.'"><i class="fas fa-trash"></i>Delete</button>';
-            
             $action = '<a class="btn btn-xs btn-warning mr-1" href="'.route("users.permissions.edit",$row->id).'" id="btnEdit"><i class="fas fa-edit"></i>Edit</a>';
             $action .= '<button class="btn btn-xs btn-danger" id="btnDelete" data-id="'.$row->id .'"><i class="fas fa-trash"></i>Delete</button>';
             return $action;
